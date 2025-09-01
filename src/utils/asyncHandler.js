@@ -1,6 +1,7 @@
 // const asyncHandler =(fn)=>async (req,res,next)=>{
 // try{
-// await fn(req,res,next)
+//   console.log("control first reached here");
+//   await fn(req,res,next)
 // }
 // catch(err){
 //     res.status(err.code || 500).json({
@@ -11,8 +12,10 @@
 // }
 
 const asyncHandler = (requestHandler) => {
-  (req, res, next) => {
+  return (req, res, next) => {
     Promise.resolve(requestHandler(req, res, next)).catch((err) => {
+   //   console.error(" Error in Controller:", err.message);
+     // console.error("Stack Trace:", err.stack);
       next(err);
     });
   };
