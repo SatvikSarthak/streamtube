@@ -17,7 +17,6 @@ const userSchema = new Schema(
       required: true,
       lowercase: true,
       unique: true,
-      
     },
     fullname: {
       type: String,
@@ -42,6 +41,9 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
+    },
+    refreshToken: {
+      type: String,
     },
   },
   { timestamps: true }
