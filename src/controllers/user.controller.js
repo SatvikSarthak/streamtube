@@ -227,6 +227,38 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
           "New Access and refresh token granted succesfully"
         )
       );
-  } catch (error) {throw new ApiError(401, error?.message || "Invalid refresh token")}
+  } catch (error) {
+    throw new ApiError(401, error?.message || "Invalid refresh token");
+  }
 });
+
+const changeCurrentPassword = asyncHandler(async (req, res) => {
+  /*steps->
+  1) user is logged in so get user details from middleware verify jwt 
+  2) you have user object in middleware
+  3)get old and new password from user
+  4) compare old password given and saved
+  5) find user with same id and update password 
+  6) return if password change is successfull
+  */
+
+  const { oldPassword, newPassword } = req.body;
+
+  const userDetails = await User.findById(req.user?._id);
+
+  const isOldPasswordValid =
+    await userDetails.kyaPasswordCorrectHai(oldPassword);
+  if (!isOldPasswordValid) throw new ApiError(400, "Old password is wrong");
+
+  userDetails.password = newPassword;
+  await userDetails.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { userDetails }, "password chnged successfully")
+    );
+});
+
+
 export { registerUser, loginUser, logOutUser, refreshAccessToken };
