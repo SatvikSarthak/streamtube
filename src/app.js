@@ -25,23 +25,5 @@ import userRoute from "./routes/user.routes.js";
 
 // routes declaration
 app.use("/api/v1/users", userRoute);
-// import { ApiError } from "./utils/ApiError.js";
-// app.use((err, req, res, next) => {
-//   console.error("🔥 Error Middleware Triggered 🔥");
-//   console.error("Error Name:", err.name);
-//   console.error("Error Message:", err.message);
-//   console.error("Stack Trace:", err.stack);
-
-//   if (!(err instanceof ApiError)) {
-//     err = new ApiError(500, err.message || "Internal Server Error");
-//   }
-
-//   return res.status(err.statusCode).json({
-//     success: err.success,
-//     message: err.message,
-//     errors: err.errors,
-//     stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-//   });
-// });
 
 export { app };
