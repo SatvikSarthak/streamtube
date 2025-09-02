@@ -270,6 +270,73 @@ const getUserDetails = asyncHandler(async (req, res) => {
     );
 });
 
+const updateUserDetails = asyncHandler(async (req, res) => {
+  const { fullname, username } = req.body;
+
+  if (!username || !fullname) {
+    throw new ApiError(402, "atleast one field should be updated");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    { $set: { fullname, username: username } },
+    { new: true }
+  ).select("-password");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "user details updated successfully"));
+});
+
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  /*
+  1) 2 middleware lagenge ek multer aur ek verify jwt wala
+  2) take localImage path
+  3)uploadon cloudinary and get link
+  4) update the link in user's database
+  */
+
+  const avatarLocalPath = req.file?.path;
+  if (!avatarLocalPath) throw new ApiError(404, "file could not be uploaded");
+  const newAvatar = await uploadOnCloudinary(avatarLocalPath);
+  if (!newAvatar.url) {
+    throw new ApiError(404, "Error while uploading on cloudinary");
+  }
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      set: {
+        avatar: newAvatar.url,
+      },
+    },
+    { new: true }
+  ).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar Image updated successuclly"));
+});
+
+const updateUserCoverImage = asyncHandler(async (req, res) => {
+  const coverLocalPath = req.file?.path;
+  if (!coverLocalPath) throw new ApiError(404, "file could not be uploaded");
+  const newCover = await uploadOnCloudinary(coverLocalPath);
+  if (!newCover.url) {
+    throw new ApiError(404, "Error while uploading on cloudinary");
+  }
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      set: {
+        coverImage: newCover.url,
+      },
+    },
+    { new: true }
+  ).select("-password");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "cover Image updated successuclly"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -277,4 +344,7 @@ export {
   refreshAccessToken,
   changeCurrentPassword,
   getUserDetails,
+  updateUserDetails,
+  updateUserCoverImage,
+  updateUserCoverImage,
 };
