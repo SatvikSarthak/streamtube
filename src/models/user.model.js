@@ -28,7 +28,14 @@ const userSchema = new Schema(
       type: String, // cloudinary url
       required: true,
     },
+    avatar_publicId: {
+      type: String,
+      required: true,
+    },
     coverImage: {
+      type: String,
+    },
+    coverImage_publicId: {
       type: String,
     },
     // array of videos

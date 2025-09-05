@@ -5,9 +5,14 @@ import {
   registerUser,
   refreshAccessToken,
   getUserDetails,
+  updateUserAvatar,
+  deleteCoverAsset,
+  updateUserCoverImage,
+  updateUserDetails,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import path from "path";
 const router = Router();
 
 router.route("/register").post(
@@ -29,4 +34,14 @@ router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJWT, logOutUser);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/getUser").get(verifyJWT, getUserDetails);
+router
+  .route("/avatar-change")
+  .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
+router
+  .route("cover-change")
+  .patch(verifyJWT, upload.single("cover"), updateUserCoverImage);
+router.route("/update").patch(verifyJWT, updateUserDetails);
+
+router.route("/delete-cover").delete(verifyJWT, deleteCoverAsset);
+router.route("/change-password").post(verifyJWT, changeCurrentPassword);
 export default router;
