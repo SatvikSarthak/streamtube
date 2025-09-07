@@ -170,7 +170,7 @@ const logOutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: { refreshToken: undefined },
+      $unset: { refreshToken: 1 },
     },
     { new: true }
   );
@@ -383,6 +383,8 @@ const getUserChannelDetails = asyncHandler(async (req, res) => {
   5) fir iss user object mei addfield krke dal doge
   */
 
+  console.log("control reached here");
+
   const { username } = req.params;
   if (!username?.trim()) throw new ApiError(400, "Username not provided");
 
@@ -414,7 +416,7 @@ const getUserChannelDetails = asyncHandler(async (req, res) => {
           $size: "$subscribers",
         },
         channelSubscribedTo: {
-          $size: "$subscribedTo ",
+          $size: "$subscribedTo",
         },
         isSubscribed: {
           $cond: {
@@ -441,6 +443,11 @@ const getUserChannelDetails = asyncHandler(async (req, res) => {
   if (!channelDetails.length) {
     throw new ApiError(404, "Username or channel doesnot exists");
   }
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, [channelDetails[0],channelDetails], "User channel fetched successfully")
+    );
 });
 const getWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
@@ -485,7 +492,15 @@ const getWatchHistory = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  return res.status(200).json(new ApiResponse)
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        user[0].watchHistory,
+        "Watch History fetched successfully"
+      )
+    );
 });
 export {
   registerUser,
@@ -499,4 +514,5 @@ export {
   updateUserCoverImage,
   deleteCoverAsset,
   getUserChannelDetails,
+  getWatchHistory,
 };

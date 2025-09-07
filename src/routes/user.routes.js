@@ -9,6 +9,9 @@ import {
   deleteCoverAsset,
   updateUserCoverImage,
   updateUserDetails,
+  getUserChannelDetails,
+  getWatchHistory,
+  changeCurrentPassword
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -44,4 +47,6 @@ router.route("/update").patch(verifyJWT, updateUserDetails);
 
 router.route("/delete-cover").delete(verifyJWT, deleteCoverAsset);
 router.route("/change-password").post(verifyJWT, changeCurrentPassword);
+router.route("/c/:username").get(verifyJWT, getUserChannelDetails);
+router.route("/history").get(verifyJWT,getWatchHistory)
 export default router;
