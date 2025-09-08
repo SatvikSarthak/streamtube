@@ -1,4 +1,4 @@
-import mongoose, { isValidObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { Tweet } from "../models/tweet.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -44,7 +44,6 @@ const getUserTweets = asyncHandler(async (req, res) => {
         foreignField: "_id",
         as: "tweetDetails",
       },
-
     },
     // unwind breaks into single arrays
     { $unwind: "$tweetDetails" },
@@ -68,18 +67,19 @@ const getUserTweets = asyncHandler(async (req, res) => {
 const updateTweet = asyncHandler(async (req, res) => {
   //TODO: update tweet
   const { tweetId } = req.params;
-  const { newContent } = req.body;
-  if (!newContent.trim() === "") throw new ApiError(400, "empty tweet");
+  const { content } = req.body;
+  if (!content.trim() === "") throw new ApiError(400, "empty tweet");
   if (!tweetId) throw new ApiError(400, "send tweetid through url");
 
-  const isTweetValid = await Tweet.isValidObjectId(tweetId);
+  const isTweetValid = mongoose.Types.ObjectId.isValid(tweetId);
+  console.log(isTweetValid);
   if (!isTweetValid) throw new ApiError(400, "Tweet does not exist");
 
   const updatedTweet = await Tweet.findByIdAndUpdate(
     tweetId,
     {
       $set: {
-        content: newContent,
+        content: content,
       },
     },
     { new: true }
@@ -94,6 +94,8 @@ const deleteTweet = asyncHandler(async (req, res) => {
   //TODO: delete tweet
   const { tweetId } = req.params;
   if (!tweetId) throw new ApiError(400, "send tweetid through url");
+  const validTweetId = mongoose.Types.ObjectId.isValid(tweetId);
+  if (!validTweetId) throw new ApiError(400, "Tweet does not exist");
 
   const deletedTweet = await Tweet.findByIdAndDelete(tweetId);
   console.log(deletedTweet);
