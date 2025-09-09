@@ -12,11 +12,15 @@ const videoSchema = new Schema(
     },
     thumbnail: {
       type: String,
-      required: true,
+      // required: true,
+    },
+    thumbnail_publicId: {
+      type: String,
+      // required: true,
     },
     owner: {
-      type: Schema.types.ObjectId,
-      ref: User,
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
     title: {
       type: String,
@@ -32,7 +36,7 @@ const videoSchema = new Schema(
       required: true,
     },
     views: {
-      type: number,
+      type: Number,
       default: 0,
     },
     isPublished: {

@@ -4,7 +4,10 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  uploadVideoOnCloudinary,
+} from "../utils/cloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
@@ -18,8 +21,16 @@ const publishAVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Title or Description is required");
   }
 
-  const thumbnailLocalPath = req.files?.thumbail[0].path;
-  
+  // const thumbnailLocalPath = req.file?.thumbail[0].path;
+  // if (!thumbnailLocalPath) throw new ApiError(400, "Thumbnail is required");
+  //const videoFile = req.file?.video;
+  //if(!videoFile) throw new ApiError(400, "Video is required");
+  //const thumbnail_result = await uploadOnCloudinary(thumbnailLocalPath);
+  const videoFile = req.file?.buffer;
+  const videoResult = await uploadVideoOnCloudinary(videoFile);
+  console.log(videoResult);
+
+  return res.status(201).json(new ApiResponse(200, videoResult));
 });
 
 const getVideoById = asyncHandler(async (req, res) => {
