@@ -54,12 +54,11 @@ const deleteOnCloudinary = async (publicId) => {
 
 const uploadVideoOnCloudinary = async (videoBuffer) => {
   try {
-    if (videoBuffer) return null;
+    if (!videoBuffer) return null;
     const resposne = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           resource_type: "video",
-          chunk_size: 6 * 1024 * 1024,
           folder: "videos",
         },
         (error, result) => {
@@ -68,10 +67,12 @@ const uploadVideoOnCloudinary = async (videoBuffer) => {
               new ApiError(500, error?.message || "File could not be uploaded")
             );
           } else {
+            console.log(result);
             resolve(result);
           }
         }
       );
+      console.log("here ");
       streamifier.createReadStream(videoBuffer).pipe(uploadStream);
     });
     return resposne;
