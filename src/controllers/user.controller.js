@@ -23,22 +23,20 @@ const generateAccessAndRefreshToken = async (userId) => {
     );
   }
 };
+//console.log("Entered registerUser Controller");
+//  console.log("Request Body:", req.body);
+// console.log("Request Files:", req.files);
 
+// get user details from frontend
+// validation - not empty
+// check if user already exists: username, email
+// check for images, check for avatar
+// upload them to cloudinary, avatar
+// create user object - create entry in db
+// remove password and refresh token field from response
+// check for user creation
+// return res
 const registerUser = asyncHandler(async (req, res) => {
-  //console.log("Entered registerUser Controller");
-  //  console.log("Request Body:", req.body);
-  // console.log("Request Files:", req.files);
-
-  // get user details from frontend
-  // validation - not empty
-  // check if user already exists: username, email
-  // check for images, check for avatar
-  // upload them to cloudinary, avatar
-  // create user object - create entry in db
-  // remove password and refresh token field from response
-  // check for user creation
-  // return res
-
   const { fullname, email, username, password } = req.body;
   //console.log("email: ", email);
 
@@ -55,26 +53,28 @@ const registerUser = asyncHandler(async (req, res) => {
   if (existedUser) {
     throw new ApiError(409, "User with email or username already exists");
   }
-  console.log(",,,");
+  // console.log(",,,");
+  console.log(req.files);
+  const avatarBuffer = req.files?.avatar?.[0]?.buffer;
+  console.log(avatarBuffer);
+  // const coverImageLocalPath = req.files?.coverImage?.[0]?.buffer;
 
-  const avatarLocalPath = req.files?.avatar[0].path;
-  //  const coverImageLocalPath = req.files?.coverImage[0]?.path;
-
-  let coverImageLocalPath;
+  let coverImageBuffer;
   if (
     req.files &&
     Array.isArray(req.files.coverImage) &&
     req.files.coverImage.length > 0
   ) {
-    coverImageLocalPath = req.files.coverImage[0].path;
+    coverImageBuffer = req.files.coverImage?.[0].buffer;
   }
+  console.log(coverImageBuffer);
 
-  if (!avatarLocalPath) {
+  if (!avatarBuffer) {
     throw new ApiError(400, "Avatar file is required");
   }
 
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  const avatar = await uploadOnCloudinary(avatarBuffer);
+  const coverImage = await uploadOnCloudinary(coverImageBuffer);
 
   if (!avatar) {
     throw new ApiError(400, "Avatar file is required");
@@ -446,7 +446,11 @@ const getUserChannelDetails = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, [channelDetails[0],channelDetails], "User channel fetched successfully")
+      new ApiResponse(
+        200,
+        [channelDetails[0], channelDetails],
+        "User channel fetched successfully"
+      )
     );
 });
 const getWatchHistory = asyncHandler(async (req, res) => {

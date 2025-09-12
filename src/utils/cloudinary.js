@@ -1,37 +1,36 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs, { rmSync } from "fs";
 import { ApiError } from "./ApiError.js";
-
 import streamifier from "streamifier";
+import { fileTypeFromBuffer } from "file-type";
 
-const uploadOnCloudinary = async (localFilePath) => {
-  try {
-    //if local file doesnt exists
-    if (!localFilePath) return null;
-    // upload on cloudinary
-    const response = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto",
-    });
-    // file uploaded , gives back an resposne object with several fields including url
+// const uploadOnCloudinary = async (localFilePath) => {
+//   try {
+//     //if local file doesnt exists
+//     if (!localFilePath) return null;
+//     // upload on cloudinary
+//     const response = await cloudinary.uploader.upload(localFilePath, {
+//       resource_type: "auto",
+//     });
+//     // file uploaded , gives back an resposne object with several fields including url
 
-    // console.log("file upload successfully", response);
-    // return the response to user
-    if (fs.existsSync(localFilePath)) {
-      fs.unlinkSync(localFilePath);
-    }
+//     // console.log("file upload successfully", response);
+//     // return the response to user
+//     if (fs.existsSync(localFilePath)) {
+//       fs.unlinkSync(localFilePath);
+//     }
 
-    console.log(response);
-    return response;
-  } catch (error) {
-    //upload unsuccessfull
-    // delete the file
-    if (fs.existsSync(localFilePath)) {
-      fs.unlinkSync(localFilePath);
-    }
+//     console.log(response);
+//     return response;
+//   } catch (error) {
+//     //upload unsuccessfull
+//     // delete the file
+//     if (fs.existsSync(localFilePath)) {
+//       fs.unlinkSync(localFilePath);
+//     }
 
-    return null;
-  }
-};
+//     return null;
+//   }
+// };
 
 const deleteOnCloudinary = async (publicId) => {
   try {
@@ -52,14 +51,22 @@ const deleteOnCloudinary = async (publicId) => {
   }
 };
 
-const uploadVideoOnCloudinary = async (videoBuffer) => {
+const uploadOnCloudinary = async (fileBuffer) => {
   try {
-    if (!videoBuffer) return null;
+    if (!fileBuffer) return null;
+    const detectType = await fileTypeFromBuffer(fileBuffer);
+    console.log(detectType);
+    const fileCategory = detectType?.mime.split("/")[0];
+    if (!(fileCategory == "video" || fileCategory == "image")) {
+      throw new ApiError(400, "file must be image or video");
+      return res.status(404);
+    }
+    console.log(fileCategory);
     const resposne = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          resource_type: "video",
-          folder: "videos",
+          resource_type: "auto",
+          folder: fileCategory === "video" ? "video" : "images",
         },
         (error, result) => {
           if (error) {
@@ -73,7 +80,7 @@ const uploadVideoOnCloudinary = async (videoBuffer) => {
         }
       );
       console.log("here ");
-      streamifier.createReadStream(videoBuffer).pipe(uploadStream);
+      streamifier.createReadStream(fileBuffer).pipe(uploadStream);
     });
     return resposne;
   } catch (error) {
@@ -87,4 +94,4 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export { uploadOnCloudinary, deleteOnCloudinary, uploadVideoOnCloudinary };
+export { uploadOnCloudinary, deleteOnCloudinary };

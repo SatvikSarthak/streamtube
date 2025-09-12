@@ -4,10 +4,7 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import {
-  uploadOnCloudinary,
-  uploadVideoOnCloudinary,
-} from "../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
@@ -28,7 +25,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
   //const thumbnail_result = await uploadOnCloudinary(thumbnailLocalPath);
   const videoFile = req.file?.buffer;
   //console.log(videoFile);
-  const videoResult = await uploadVideoOnCloudinary(videoFile);
+  const videoResult = await uploadOnCloudinary(videoFile);
   console.log(videoResult);
 
   return res.status(201).json(new ApiResponse(200, videoResult));
