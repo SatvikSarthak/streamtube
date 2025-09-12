@@ -62,7 +62,7 @@ const registerUser = asyncHandler(async (req, res) => {
   let coverImageBuffer;
   if (
     req.files &&
-    Array.isArray(req.files.coverImage) &&
+    Array.  ay(req.files.coverImage) &&
     req.files.coverImage.length > 0
   ) {
     coverImageBuffer = req.files.coverImage?.[0].buffer;
