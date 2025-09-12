@@ -18,22 +18,44 @@ const publishAVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Title or Description is required");
   }
 
-  // const thumbnailLocalPath = req.file?.thumbail[0].path;
-  // if (!thumbnailLocalPath) throw new ApiError(400, "Thumbnail is required");
-  //const videoFile = req.file?.video;
-  //if(!videoFile) throw new ApiError(400, "Video is required");
-  //const thumbnail_result = await uploadOnCloudinary(thumbnailLocalPath);
-  const videoFile = req.file?.buffer;
-  //console.log(videoFile);
-  const videoResult = await uploadOnCloudinary(videoFile);
-  console.log(videoResult);
+  const videoBuffer = req.files?.video?.[0].buffer;
+  //console.log(videoBuffer);
+  if (!videoBuffer) throw new ApiError(400, "Video is required");
 
-  return res.status(201).json(new ApiResponse(200, videoResult));
+  const thumbnailBuffer = req.files?.thumbnail?.[0].buffer;
+  if (!thumbnailBuffer) throw new ApiError(400, "thumbnail is required");
+  //console.log(thumbnailBuffer);
+
+  const videoUpload = await uploadOnCloudinary(videoBuffer);
+  //  console.log("video upload",videoUpload);
+  const thumbailUpload = await uploadOnCloudinary(thumbnailBuffer);
+  if (!videoUpload && !thumbailUpload)
+    throw new ApiError(500, "Video and thumbnail couldn't be uploaded");
+  //console.log("thumbnail upload",thumbailUpload);
+
+  const newVideo = await Video.create({
+    videoFile: videoUpload?.url,
+    video_publicId: videoUpload?.public_id,
+    thumbnail: thumbailUpload?.url,
+    thumbnail_publicId: thumbailUpload?.public_id,
+    owner: req.user?._id,
+    title,
+    description,
+    duration: videoUpload?.duration,
+  });
+  //console.log(newVideo);
+
+  if (!newVideo) throw new ApiError(500, "Video couldnt be created");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { newVideo }, "Video uploaded successfully"));
 });
 
 const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: get video by id
+  const validVideoId = mongoose.isValidObjectId(videoId);
+  if (!validVideoId) throw new ApiError(400, "Please provide a valid video");
 });
 
 const updateVideo = asyncHandler(async (req, res) => {

@@ -55,7 +55,7 @@ const uploadOnCloudinary = async (fileBuffer) => {
   try {
     if (!fileBuffer) return null;
     const detectType = await fileTypeFromBuffer(fileBuffer);
-    console.log(detectType);
+   //console.log(detectType);
     const fileCategory = detectType?.mime.split("/")[0];
     if (!(fileCategory == "video" || fileCategory == "image")) {
       throw new ApiError(400, "file must be image or video");
@@ -79,7 +79,7 @@ const uploadOnCloudinary = async (fileBuffer) => {
           }
         }
       );
-      console.log("here ");
+      //console.log("here ");
       streamifier.createReadStream(fileBuffer).pipe(uploadStream);
     });
     return resposne;

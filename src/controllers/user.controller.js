@@ -90,7 +90,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     username: username.toLowerCase(),
   });
-
+   
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
@@ -297,10 +297,12 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
   3)uploadon cloudinary and get link
   4) update the link in user's database
   */
+  //  console.log(req.file);
 
-  const avatarLocalPath = req.file?.path;
-  if (!avatarLocalPath) throw new ApiError(404, "file could not be uploaded");
-  const newAvatar = await uploadOnCloudinary(avatarLocalPath);
+  const avatarBuffer = req.file?.buffer;
+  //console.log(avatarBuffer);
+  if (!avatarBuffer) throw new ApiError(404, "file could not be uploaded");
+  const newAvatar = await uploadOnCloudinary(avatarBuffer);
   if (!newAvatar.url) {
     throw new ApiError(404, "Error while uploading on cloudinary");
   }
@@ -321,9 +323,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
-  const coverLocalPath = req.file?.path;
-  if (!coverLocalPath) throw new ApiError(404, "file could not be uploaded");
-  const newCover = await uploadOnCloudinary(coverLocalPath);
+  const coverImageBuffer = req.file?.buffer;
+  if (!coverImageBuffer) throw new ApiError(404, "file could not be uploaded");
+  const newCover = await uploadOnCloudinary(coverImageBuffer);
   if (!newCover.url) {
     throw new ApiError(404, "Error while uploading on cloudinary");
   }
