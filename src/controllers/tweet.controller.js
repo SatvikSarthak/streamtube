@@ -79,7 +79,7 @@ const updateTweet = asyncHandler(async (req, res) => {
     tweetId,
     {
       $set: {
-        content: content,
+        content,
       },
     },
     { new: true }

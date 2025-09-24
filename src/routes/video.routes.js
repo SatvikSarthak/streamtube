@@ -8,6 +8,7 @@ import {
   deleteVideo,
   updateVideo,
   togglePublishStatus,
+  getAllVideos,
 } from "../controllers/video.controller.js";
 router.route("/upload").post(
   verifyJWT,
@@ -31,4 +32,6 @@ router
   .patch(verifyJWT, upload.single("thumbnail"), updateVideo);
 
 router.route("/toggle-publish/:videoId").post(verifyJWT, togglePublishStatus);
+
+router.route("/getAllVideo").get(verifyJWT,getAllVideos);
 export default router;

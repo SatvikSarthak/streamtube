@@ -16,6 +16,8 @@ connectDB()
     console.log("error is", err);
   });
 
+
+
 //connect db method is an aysnc fucntion whcih always return a promise
 
 //approach 1 ->>

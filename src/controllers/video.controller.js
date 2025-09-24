@@ -10,6 +10,68 @@ import { upload } from "../middlewares/multer.middleware.js";
 const getAllVideos = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
   //TODO: get all videos based on query, sort, pagination
+  const options = {
+    page: parseInt(page),
+    limit: parseInt(limit),
+  };
+  const ownerId = new mongoose.Types.ObjectId(userId);
+  // query on which to sort by
+  //sort by - created at , views etc ,
+  // sort type asc or desc. , 1-> asc, -1=> desc
+
+  //console.log(id);
+console.log("query:", query);
+console.log("sortBy:", sortBy);
+console.log("sortType:", sortType);
+console.log("userId:", userId, "converted:", ownerId);
+
+  const pipeline =  Video.aggregate([
+    {
+      $match: {
+        ...(query && {
+          $or: [
+            {
+              title: { $regex: query, $options: "i" },
+            },
+            { description: { $regex: query, $options: "i" } },
+          ],
+        }),
+        ...(userId && { owner: ownerId }),
+      },
+    },
+
+    {
+      $lookup: {
+        localField: "owner",
+        foreignField: "_id",
+        from: "users",
+        as: "creator",
+      },
+    },
+    { $unwind: "$creator" },
+
+    {
+      $sort: {
+        [sortBy]: sortType === "asc" ? 1 : -1,
+      },
+    },
+    {
+      $project: {
+        isPublished: 1,
+        title: 1,
+        username:"$creator.username",
+      },
+    },
+  ]);
+  console.log(pipeline);
+
+  const result = await Video.aggregatePaginate(pipeline, options);
+ if (!result || result.docs.length === 0) throw new ApiError(404, "No videos found");
+
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, "video fetched succesfully"));
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -167,9 +229,7 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
   videoDetails.isPublished = !videoDetails.isPublished;
   await videoDetails.save({ validateBeforeSave: false });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, videoDetails, "done"));
+  return res.status(200).json(new ApiResponse(200, videoDetails, "done"));
 });
 
 export {
