@@ -15,7 +15,7 @@ router
   .route("/getUserChannelSubscribers/:channelId")
   .get(verifyJWT, getUserChannelSubscribers);
 router
-  .route("/getMySubcribedChannel/:channelId")
+  .route("/getMySubcribedChannel")
   .get(verifyJWT, getSubscribedChannels);
 
 export default router;
