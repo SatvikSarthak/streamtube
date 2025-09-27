@@ -11,11 +11,16 @@ const toggleSubscription = asyncHandler(async (req, res) => {
   // TODO: toggle subscription
   if (!isValidObjectId(channelId)) throw new ApiError(400, "Enter a valid id");
 
-  const alreadySubscibed = await Subscription.findOne({
-    channel: channelId,
-    subscriber: req.user?._id.toString(),
-  });
-
+   const subscribedAlready = Subscription.where({
+    channel:channelId,
+    subscriber:req.user._id
+   })
+  // const alreadySubscibed = await Subscription.findOne({
+  //   channel: channelId,
+  //   subscriber: req.user?._id.toString(),
+  // });
+  const alreadySubscibed = await subscribedAlready.find();
+  
   console.log(alreadySubscibed);
   let message;
   if (alreadySubscibed) {
