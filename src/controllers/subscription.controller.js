@@ -11,16 +11,16 @@ const toggleSubscription = asyncHandler(async (req, res) => {
   // TODO: toggle subscription
   if (!isValidObjectId(channelId)) throw new ApiError(400, "Enter a valid id");
 
-   const subscribedAlready = Subscription.where({
-    channel:channelId,
-    subscriber:req.user._id
-   })
+  const subscribedAlready = Subscription.where({
+    channel: channelId,
+    subscriber: req.user._id,
+  });
   // const alreadySubscibed = await Subscription.findOne({
   //   channel: channelId,
   //   subscriber: req.user?._id.toString(),
   // });
   const alreadySubscibed = await subscribedAlready.find();
-  
+
   console.log(alreadySubscibed);
   let message;
   if (alreadySubscibed) {
@@ -89,13 +89,13 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
   //const { subscriberId } = req.params;
 
   //if (!isValidObjectId(subscriberId.toString()))
-    //throw new ApiResponse(400, "Please give a valid id");
+  //throw new ApiResponse(400, "Please give a valid id");
 
   const subscribedTo = await Subscription.aggregate([
     {
       $match: {
         // subscriber: new mongoose.Types.ObjectId(subscriberId),
-        subscriber:req.user._id
+        subscriber: req.user._id,
       },
     },
     {
