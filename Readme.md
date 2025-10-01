@@ -1,6 +1,6 @@
-# StreamTube 🎥
+# streamtube 🎥
 
-A **backend video streaming platform** built with **Node.js, Express.js, MongoDB, and JWT authentication**, featuring modular controllers, RESTful APIs, and media handling with **Cloudinary**. The frontend will be built using **Next.js and React**.
+A **video streaming platform** built with **Node.js, Express.js, MongoDB, and JWT authentication**, featuring modular controllers, RESTful APIs, and media handling with **Cloudinary**. The frontend will be built using **Next.js and React**.
 
 ---
 
@@ -22,40 +22,39 @@ A **backend video streaming platform** built with **Node.js, Express.js, MongoDB
 ---
 
 ## 📂 Project Structure
-BACKENDCOCPROJECT/
+
+```streamtube/
 │
 ├── public/ # Static files
-│ └── temp/ # Temporary uploads
+│ └── temp/ # Temporary uploads for files/images
 │
 ├── src/
 │ ├── controllers/ # Route controllers (video, user, comment, etc.)
-│ ├── db/ # Database connection
-│ ├── middlewares/ # Auth & file upload middlewares
-│ ├── models/ # Mongoose models
-│ ├── routes/ # API route definitions
-│ ├── utils/ # Utility helpers (Cloudinary, error handlers)
-│ ├── app.js # Express app config
-│ ├── constants.js # Constants
-│ └── index.js # Entry point
+│ ├── db/ # Database connection (like MongoDB config)
+│ ├── middlewares/ # Auth, file upload, and other middleware
+│ ├── models/ # Mongoose models/schemas
+│ ├── routes/ # API route definitions and endpoints
+│ ├── utils/ # Utility helpers: Cloudinary, error handlers
+│ ├── app.js # Express app configuration
+│ ├── constants.js # App-wide constants
+│ └── index.js # Entry point for server start
 │
-├── .env # Environment variables
-├── .gitignore
-├── .prettierignore
-└── package.json
-
+├── .env # Environment variables (credentials, config)
+├── .gitignore # Files/folders ignored in git
+├── .prettierignore # Files/folders ignored for Prettier formatting
+└── package.json # Project dependencies and scripts
+```
 ## ⚡ Getting Started
 
 ### 1. Clone the repo
-```bash
 git clone https://github.com/SatvikSarthak/streamtube.git
-cd BACKENDCOCPROJECT
+cd streamtube
+
 2. Install dependencies
-bash
-Copy code
 npm install
 3. Setup environment variables
 Create a .env file in the root:
-
+```
 # Server Configuration
 PORT=8000
 CORS_ORIGIN=*
@@ -73,11 +72,15 @@ REFRESH_TOKEN_EXPIRY=10d
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
 4. Run the development server
 npm run dev
+
+
 📖 API Documentation
 All API endpoints are available in the Postman collection:
-👉 Postman Collection Link
+    [Link](https://www.postman.com/satviksarthak17/workspace/satvik-s-project-apis)
+
 
 
 📌 Roadmap
