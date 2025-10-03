@@ -28,6 +28,7 @@ import subscriptionRoute from "./routes/subscription.routes.js";
 import playlistRoute from "./routes/playlist.routes.js";
 import commentRoute from "./routes/comment.routes.js";
 import likeRoute from "./routes/like.routes.js";
+import healthRoute from "./routes/healthcheck.routes.js";
 // routes declaration
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/tweet", tweetRoute);
@@ -36,4 +37,5 @@ app.use("/api/v1/subscription", subscriptionRoute);
 app.use("/api/v1/playlist", playlistRoute);
 app.use("/api/v1/comment", commentRoute);
 app.use("/api/v1/like", likeRoute);
+app.use("/api/v1/health", healthRoute);
 export { app };
